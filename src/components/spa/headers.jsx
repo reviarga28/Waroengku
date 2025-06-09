@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export const SpaHeader = () => {
   return (
@@ -54,9 +55,11 @@ export const SpaHeader = () => {
                 transition={{ delay: 0.6, duration: 0.8 }}
                 className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
+                <Link href="/login">
                 <Button className="relative bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white px-8 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
                   Pesan Sekarang
                 </Button>
+                </Link>
                 <a href="#menu">
                   <Button
                     variant="outline"

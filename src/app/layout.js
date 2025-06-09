@@ -1,5 +1,5 @@
 // import { Geist, Geist_Mono } from "next/font/google";
-import Navbar from "@/components/navbars";
+import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 
 // const geistSans = Geist({
@@ -21,8 +21,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id" className="scroll-smooth">
       <body className="font-sans">
-        <Navbar />
-        <main className="">{children}</main>
+        <SessionProvider>
+          <main className="">{children}</main>
+        </SessionProvider>
       </body>
     </html>
   );

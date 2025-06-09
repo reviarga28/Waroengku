@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
 export const SpaAbout = () => {
+
   return (
     <section
       id="about"
@@ -215,6 +215,7 @@ export const SpaAbout = () => {
           </motion.div>
         </div>
       </div>
+
     </section>
   );
 };

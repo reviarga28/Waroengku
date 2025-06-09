@@ -1,6 +1,7 @@
 "use client";
 import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
@@ -19,6 +20,7 @@ export default function Navbar() {
     { id: "home", label: "Beranda" },
     { id: "menu", label: "Menu" },
     { id: "about", label: "Tentang" },
+    { id: "testimonial", label: "Testimoni" },
     { id: "contact", label: "Kontak" },
   ];
 
@@ -55,9 +57,9 @@ export default function Navbar() {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
                 </a>
               ))}
-              <button className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">
+              <Link href="/login" className="ml-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">
                 Pesan Sekarang
-              </button>
+              </Link>
             </div>
           </div>
 

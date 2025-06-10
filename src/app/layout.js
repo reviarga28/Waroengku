@@ -1,5 +1,6 @@
 // import { Geist, Geist_Mono } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
+import ClientProvider from "@/components/ClientProvider";
 import "./globals.css";
 
 // const geistSans = Geist({
@@ -21,9 +22,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id" className="scroll-smooth">
       <body className="font-sans">
-        <SessionProvider>
+        <ClientProvider>
           <main className="">{children}</main>
-        </SessionProvider>
+        </ClientProvider>
       </body>
     </html>
   );

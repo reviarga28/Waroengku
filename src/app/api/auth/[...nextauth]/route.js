@@ -1,53 +1,56 @@
-// import NextAuth from "next-auth";
-// import GoogleProvider from "next-auth/providers/google";
-// import GithubProvider from "next-auth/providers/github";
-
-// const handler = NextAuth({
-//   providers: [
-//     GoogleProvider({
-//       clientId: process.env.GOOGLE_CLIENT_ID,
-//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     }),
-//     GithubProvider({
-//       clientId: process.env.GITHUB_ID,
-//       clientSecret: process.env.GITHUB_SECRET,
-//     }),
-//   ],
-//   pages: {
-//     signIn: '/login',
-//   },
-// });
-
-// export { handler as GET, handler as POST };
-
-
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import CredentialsProvider from "next-auth/providers/credentials";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient();
-
-const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
+// ✅ Tambahkan ini agar bisa dipakai di getServerSession
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: {},
+        password: {},
+      },
+      async authorize(credentials) {
+        console.log("CREDENTIALS:", credentials);
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user || !user.password) return null;
+
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+        if (!isValid) return null;
+        return user;
+      },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "database", // menyimpan session di database
+    strategy: "jwt",
   },
   pages: {
-    signIn: "/login", // custom login page (opsional)
+    signIn: "/login",
   },
-});
+  callbacks: {
+    async session({ session, token }) {
+      session.user.id = token.sub;
+      return session;
+    },
+  },
+};
 
+// ⬇️ Gunakan authOptions untuk membuat handler
+const handler = NextAuth(authOptions);
+
+// ✅ Export semua yang dibutuhkan
 export { handler as GET, handler as POST };
+export { authOptions };

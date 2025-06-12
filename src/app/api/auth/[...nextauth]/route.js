@@ -2,55 +2,93 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcrypt"; // Gunakan bcryptjs agar ringan & kompatibel di Vercel
 
-// ✅ Tambahkan ini agar bisa dipakai di getServerSession
 export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {},
-        password: {},
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("CREDENTIALS:", credentials);
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email dan password wajib diisi.");
+        }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
-        if (!user || !user.password) return null;
+        if (!user || !user.password) {
+          throw new Error("Email tidak ditemukan atau belum terdaftar.");
+        }
 
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
         );
-        if (!isValid) return null;
-        return user;
+        if (!isValid) {
+          throw new Error("Password salah.");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
       },
     }),
   ],
+
   session: {
     strategy: "jwt",
   },
+
   pages: {
     signIn: "/login",
   },
+
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+
+      // Ambil ulang user dari database setiap kali session diminta
+      const dbUser = await prisma.user.findUnique({
+        where: { email: token.email },
+      });
+
+      if (dbUser) {
+        token.role = dbUser.role;
+        token.id = dbUser.id;
+      }
+
+      return token;
+    },
     async session({ session, token }) {
-      session.user.id = token.sub;
+      session.user.id = token.id;
+      session.user.role = token.role; // penting
+      console.log("SESSION:", session);
       return session;
     },
   },
+
+  // OPTIONAL: Debugging saat dev
+  debug: process.env.NODE_ENV === "development",
 };
 
-// ⬇️ Gunakan authOptions untuk membuat handler
+// NextAuth handler
 const handler = NextAuth(authOptions);
 
-// ✅ Export semua yang dibutuhkan
 export { handler as GET, handler as POST };
 export { authOptions };

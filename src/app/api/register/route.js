@@ -4,8 +4,8 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
-    console.log('Incoming register request:', { name, email, password });
+    const { name, email, password, role } = await req.json();
+    console.log('Incoming register request:', { name, email, role });
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -26,6 +26,7 @@ export async function POST(req) {
         name,
         email,
         password: hashedPassword,
+        role: role || "user", // ✅ Default role user jika tidak diberikan
       },
     });
 

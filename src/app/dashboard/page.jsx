@@ -1,17 +1,13 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
-  if (!session) {
-    redirect('/login')
-  }
+  if (!session) return redirect("/login");
 
-  return (
-    <div>
-      <h1>Selamat datang, {session.user.name}</h1>
-    </div>
-  )
+  // Role-based redirect
+  if (session.user.role === "admin") return redirect("/dashboard/admin");
+  return redirect("/dashboard/user");
 }

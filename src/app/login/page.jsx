@@ -14,47 +14,59 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-        callbackUrl: "/dashboard",
-      });
+  try {
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
 
-      if (res?.error) {
-        Swal.fire({
-          title: "Login Failed",
-          text: res.error,
-          icon: "error",
-          confirmButtonColor: "#dc2626",
-        });
-      } else {
-        Swal.fire({
-          title: "Login Successful",
-          text: "Redirecting to dashboard...",
-          icon: "success",
-          confirmButtonColor: "#dc2626",
-          timer: 2000,
-          showConfirmButton: false,
-        }).then(() => {
-          window.location.href = res?.url || "/dashboard";
-        });
-      }
-    } catch (error) {
+    if (res?.error) {
       Swal.fire({
-        title: "Error",
-        text: "An unexpected error occurred",
+        title: "Login Failed",
+        text: res.error,
         icon: "error",
         confirmButtonColor: "#dc2626",
       });
-    } finally {
-      setIsLoading(false);
+    } else {
+      // ✅ Cek session
+      const sessionRes = await fetch("/api/auth/session");
+      const session = await sessionRes.json();
+      console.log("SESSION:", session);
+
+      const role = session?.user?.role;
+      Swal.fire({
+        title: "Login Successful",
+        text: "Redirecting to dashboard...",
+        icon: "success",
+        confirmButtonColor: "#dc2626",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => {
+        if (role === "admin") {
+          window.location.href = "/dashboard/admin/users";
+        } else {
+          window.location.href = "/dashboard/user";
+        }
+      }, 1500);
     }
-  };
+  } catch (error) {
+    Swal.fire({
+      title: "Error",
+      text: "An unexpected error occurred",
+      icon: "error",
+      confirmButtonColor: "#dc2626",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleGoogleLogin = async () => {
     try {

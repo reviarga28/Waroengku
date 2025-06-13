@@ -21,5 +21,59 @@ model User {
   password String?
   image    String?
   role     String   @default("user")
+  pesanan   Pesanan[]
+  testimoni Testimoni[]
   createdAt DateTime @default(now())
+}
+
+model Menu {
+  id          String   @id @default(cuid())
+  nama        String
+  deskripsi   String?
+  image       String?
+  harga       Int
+  tersedia    Boolean  @default(true)
+  pesanan     PesananMenu[]
+  testimoni   Testimoni[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Pesanan {
+  id          String         @id @default(cuid())
+  user        User           @relation(fields: [userId], references: [id])
+  userId      String
+  menuItems   PesananMenu[]
+  total       Int
+  status      String         @default("pending") // pending | selesai | dibatalkan
+  createdAt   DateTime       @default(now())
+}
+
+model PesananMenu {
+  id        String  @id @default(cuid())
+  pesanan   Pesanan @relation(fields: [pesananId], references: [id])
+  pesananId String
+  menu      Menu    @relation(fields: [menuId], references: [id])
+  menuId    String
+  jumlah    Int
+}
+
+model Testimoni {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  menuId    String
+  komentar  String
+  rating    Int      // 1 - 5
+  createdAt DateTime @default(now())
+}
+
+model Laporan {
+  id          String   @id @default(cuid())
+  bulan       Int      // 1 - 12
+  tahun       Int
+  totalPendapatan Int
+  jumlahPesanan   Int
+  dibuatPada      DateTime @default(now())
 }

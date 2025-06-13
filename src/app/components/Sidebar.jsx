@@ -7,41 +7,50 @@ import {
   Utensils,
   ClipboardList,
   FileText,
-  User as UserIcon,
   CreditCard,
   LogOut,
   ChevronRight,
   Crown,
-  User,
+  User as UserIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function Sidebar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!session) return null;
 
   const isAdmin = session.user.role === "admin";
 
-  const isActive = (href) => pathname ===(href);
+  const isActive = (href) => pathname === href;
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-red-700 to-red-800 text-white h-screen fixed left-0 top-0 p-6 shadow-xl z-10">
+    <aside className="w-64 bg-gradient-to-b from-red-700 to-red-800 text-white h-screen flex flex-col p-4 shadow-xl relative">
+      {/* Mobile Close Button */}
+      <button
+        className="md:hidden absolute top-2 right-2 p-1 rounded-full hover:bg-red-600"
+        onClick={() => setIsOpen(false)}
+      >
+        {/* <X className="w-5 h-5" /> */}
+      </button>
+
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-6 p-2">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3 mb-2"
+            className="flex items-center gap-3"
           >
             <div className="p-2 bg-white/20 rounded-lg">
               {isAdmin ? (
                 <Crown className="w-6 h-6 text-yellow-300" />
               ) : (
-                <User className="w-6 h-6 text-white" />
+                <UserIcon className="w-6 h-6 text-white" />
               )}
             </div>
             <div>
@@ -54,7 +63,7 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1">
+        <nav className="flex-1 overflow-y-auto">
           <ul className="space-y-1">
             <li>
               <Link
@@ -64,6 +73,7 @@ export default function Sidebar() {
                     ? "bg-white text-red-700 font-medium shadow-md"
                     : "hover:bg-red-600/80"
                 }`}
+                onClick={() => setIsOpen(false)}
               >
                 <div className="flex items-center gap-3">
                   <Home className="w-5 h-5" />
@@ -87,6 +97,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <Users className="w-5 h-5" />
@@ -107,6 +118,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <Utensils className="w-5 h-5" />
@@ -127,6 +139,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <ClipboardList className="w-5 h-5" />
@@ -147,6 +160,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <FileText className="w-5 h-5" />
@@ -161,26 +175,6 @@ export default function Sidebar() {
                 <motion.li
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <Link
-                    href="/dashboard/user/profile"
-                    className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-all ${
-                      isActive("/dashboard/user/profile")
-                        ? "bg-white text-red-700 font-medium shadow-md"
-                        : "hover:bg-red-600/80"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <UserIcon className="w-5 h-5" />
-                      <span>Profile</span>
-                    </div>
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </motion.li>
-                                <motion.li
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.15 }}
                 >
                   <Link
@@ -190,6 +184,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <Utensils className="w-5 h-5" />
@@ -210,6 +205,7 @@ export default function Sidebar() {
                         ? "bg-white text-red-700 font-medium shadow-md"
                         : "hover:bg-red-600/80"
                     }`}
+                    onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center gap-3">
                       <CreditCard className="w-5 h-5" />

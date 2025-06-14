@@ -1,17 +1,26 @@
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(req, { params }) {
-  const { id } = params;
+export async function DELETE(req, context) {
+  const id = context?.params?.id;
+
+  if (!id) {
+    return new Response("ID pesanan tidak ditemukan", { status: 400 });
+  }
+
   try {
-    await prisma.pesanan.delete({
+    await prisma.pesanan.update({
       where: { id },
+      data: { status: "dibatalkan" },
     });
-    return NextResponse.json({ success: true });
+
+    return new Response("Pesanan dibatalkan", { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Gagal menghapus pesanan' }, { status: 500 });
+    console.error("Gagal membatalkan pesanan:", error);
+    return new Response("Gagal membatalkan pesanan", { status: 500 });
   }
 }
+
 
 // UPDATE STATUS
 export async function PUT(req, { params }) {
@@ -29,23 +38,32 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function GET(req, { params }) {
+export async function GET(_, { params }) {
   const { id } = params;
 
   try {
-    const pesanan = await prisma.pesanan.findUnique({
-      where: { id },
+    const pesanan = await prisma.pesanan.findMany({
+      where: {
+        userId: id,
+        status: {
+          not: "dibatalkan",
+        },
+      },
       include: {
-        user: true,
         menuItems: {
           include: {
             menu: true,
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
-    return NextResponse.json(pesanan);
+
+    return Response.json(pesanan);
   } catch (error) {
-    return NextResponse.json({ error: 'Gagal mengambil data' }, { status: 500 });
+    console.error("Gagal mengambil pesanan:", error);
+    return new Response("Gagal mengambil pesanan", { status: 500 });
   }
 }

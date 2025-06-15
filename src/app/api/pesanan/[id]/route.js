@@ -22,7 +22,6 @@ export async function DELETE(req, context) {
 }
 
 
-// UPDATE STATUS
 export async function PUT(req, { params }) {
   const { id } = params;
   const { status } = await req.json();
@@ -38,32 +37,29 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function GET(_, { params }) {
-  const { id } = params;
+export async function GET(req, { params }) {
+  const { id } = await params;
 
   try {
-    const pesanan = await prisma.pesanan.findMany({
-      where: {
-        userId: id,
-        status: {
-          not: "dibatalkan",
-        },
-      },
+    const pesanan = await prisma.pesanan.findUnique({
+      where: { id },
       include: {
+        user: true,
         menuItems: {
           include: {
             menu: true,
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
     });
 
-    return Response.json(pesanan);
+    if (!pesanan) {
+      return new Response(JSON.stringify({ error: "Pesanan tidak ditemukan" }), { status: 404 });
+    }
+
+    return new Response(JSON.stringify(pesanan));
   } catch (error) {
-    console.error("Gagal mengambil pesanan:", error);
-    return new Response("Gagal mengambil pesanan", { status: 500 });
+    console.error("API ERROR:", error);
+    return new Response(JSON.stringify({ error: "Gagal memuat pesanan" }), { status: 500 });
   }
 }

@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-// GET semua menu
 export async function GET() {
   const menus = await prisma.menu.findMany({
     orderBy: { createdAt: "desc" },
@@ -9,7 +8,6 @@ export async function GET() {
   return NextResponse.json(menus);
 }
 
-// POST tambah menu baru
 export async function POST(req) {
   const body = await req.json();
   const { nama, deskripsi, harga, tersedia, image } = body;

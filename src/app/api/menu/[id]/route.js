@@ -22,7 +22,6 @@ export async function GET(req, { params }) {
   }
 }
 
-// DELETE menu by ID
 export async function DELETE(request, { params }) {
   const { id } = params;
 
@@ -40,7 +39,6 @@ export async function DELETE(request, { params }) {
   }
 }
 
-// PUT update menu by ID
 export async function PUT(request, { params }) {
   const { id } = params;
   const body = await request.json();

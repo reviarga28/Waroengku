@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-// Ambil semua laporan
 export async function GET() {
   const laporan = await prisma.laporan.findMany({
     orderBy: { dibuatPada: "desc" },
@@ -9,7 +8,6 @@ export async function GET() {
   return NextResponse.json(laporan);
 }
 
-// Buat laporan baru dari data pesanan
 export async function POST() {
   const now = new Date();
   const bulan = now.getMonth() + 1;

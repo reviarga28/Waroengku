@@ -26,7 +26,7 @@ export async function POST(req) {
         name,
         email,
         password: hashedPassword,
-        role: role || "user", // ✅ Default role user jika tidak diberikan
+        role: role || "user",
       },
     });
 

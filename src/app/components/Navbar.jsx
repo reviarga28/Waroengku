@@ -43,7 +43,6 @@ export default function Navbar({ onMenuClick }) {
         </div>
       </div>
 
-      {/* Right Section */}
       <div className="flex items-center gap-4">
         <button className="relative text-red-600 hover:text-red-800">
           <Bell className="w-5 h-5" />

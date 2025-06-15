@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt"; // Gunakan bcryptjs agar ringan & kompatibel di Vercel
+import bcrypt from "bcrypt"; 
 
 export const authOptions = {
   providers: [
@@ -63,7 +63,6 @@ export const authOptions = {
         token.id = user.id;
       }
 
-      // Ambil ulang user dari database setiap kali session diminta
       const dbUser = await prisma.user.findUnique({
         where: { email: token.email },
       });
@@ -77,17 +76,15 @@ export const authOptions = {
     },
     async session({ session, token }) {
       session.user.id = token.id;
-      session.user.role = token.role; // penting
+      session.user.role = token.role;
       console.log("SESSION:", session);
       return session;
     },
   },
 
-  // OPTIONAL: Debugging saat dev
   debug: process.env.NODE_ENV === "development",
 };
 
-// NextAuth handler
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

@@ -30,12 +30,10 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-gradient-to-b from-red-700 to-red-800 text-white h-screen flex flex-col p-4 shadow-xl relative">
-      {/* Mobile Close Button */}
       <button
         className="md:hidden absolute top-2 right-2 p-1 rounded-full hover:bg-red-600"
         onClick={() => setIsOpen(false)}
       >
-        {/* <X className="w-5 h-5" /> */}
       </button>
 
       <div className="flex flex-col h-full">

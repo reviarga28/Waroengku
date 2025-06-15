@@ -3,22 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { userId, items } = await req.json(); // items: [{ menuId, jumlah }]
+    const { userId, items } = await req.json();
 
-    // Ambil data menu untuk menghitung total
     const menus = await prisma.menu.findMany({
       where: {
         id: { in: items.map((item) => item.menuId) },
       },
     });
 
-    // Hitung total harga
     const total = items.reduce((sum, item) => {
       const menu = menus.find((m) => m.id === item.menuId);
       return sum + (menu?.harga || 0) * item.jumlah;
     }, 0);
 
-    // Buat pesanan
     const pesanan = await prisma.pesanan.create({
       data: {
         userId,

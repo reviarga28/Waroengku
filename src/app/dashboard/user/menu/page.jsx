@@ -141,14 +141,12 @@ export default function MenuUserPage() {
             className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
           >
             <div className="relative h-48 overflow-hidden">
-              <Image
-                src={item.image ? `/images/${item.image}` : "/no-image.png"}
+              <img
+                src={item.image}
                 alt={item.nama}
-                width={500}
-                height={500}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.target.src = "/no-image.png";
+                  e.target.src = "/image-found.png";
                 }}
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">

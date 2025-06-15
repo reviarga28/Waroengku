@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -153,8 +152,8 @@ export default function AdminMenuPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="container">
+      <div className="bg-white h-screen shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Kelola Menu</h1>
 
         {/* Form Section */}
@@ -213,11 +212,9 @@ export default function AdminMenuPage() {
               </label>
               {previewImage && (
                 <div className="mb-2">
-                  <Image
+                  <img
                     src={previewImage}
                     alt="Preview"
-                    width={200}
-                    height={200}
                     className="h-32 object-cover rounded-md"
                   />
                 </div>
@@ -322,14 +319,12 @@ export default function AdminMenuPage() {
                       <div className="flex items-center">
                         {menu.image && (
                           <div className="flex-shrink-0 h-10 w-10 mr-3">
-                            <Image
+                            <img
                               className="h-10 w-10 rounded-full object-cover"
                               src={menu.image}
                               alt={menu.nama}
-                              width={500}
-                              height={500}
                               onError={(e) => {
-                                e.target.src = "/no-image.png";
+                                e.target.src = "/image-found.png";
                               }}
                             />
                           </div>
